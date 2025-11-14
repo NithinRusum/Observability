@@ -1,0 +1,100 @@
+mimir:
+  structuredConfig:
+    limits:
+      max_global_series_per_user: 3000000
+      ingestion_rate: 10000000
+      ingestion_burst_size: 20000000
+      out_of_order_time_window: 10m
+      compactor_blocks_retention_period: 7d
+distributor:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+ingester:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  ring:
+    unregister_on_shutdown: true
+    zone_awareness_enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 3Gi
+
+querier:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+query_frontend:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 400m
+      memory: 512Mi
+
+store_gateway:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  sharding_ring:
+    unregister_on_shutdown: true
+  resources:
+    requests:
+      cpu: 200m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+ruler:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+compactor:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
+
+minio:
+  enabled: false
+
+nginx:
+  nodeSelector:
+    oke.oraclecloud.com/pool.name: "mimir"
+  service:
+    type: LoadBalancer
+    annotations:
+      oci.oraclecloud.com/load-balancer-type: "nlb"
+      oci-network-load-balancer.oraclecloud.com/oci-network-security-groups: "ocid1.networksecuritygroup.oc1.ap-mumbai-1.aaaaaaaabsychpdulwucle765btifurfoxumodvpxgibxtklahcnnj7lqwwq"
